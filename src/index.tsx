@@ -1,21 +1,27 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
+import { BrowserRouter as Router } from 'react-router-dom';
+import { ConfigProvider } from 'antd'
+import zhCN from 'antd/locale/zh_CN';
 import reportWebVitals from './reportWebVitals';
-import {
-  RouterProvider,
-} from "react-router-dom";
-import { router } from "./router";
+import './index.css';
+
+import App from '@/layout'
+
+import 'antd/dist/reset.css';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
+
 root.render(
   <React.StrictMode>
-    <div style={{ background: 'red' }}>
-      <RouterProvider router={router} />
-    </div>
-
+    <ConfigProvider locale={zhCN}>
+      <Router>
+        <App />
+      </Router>
+    </ConfigProvider>
   </React.StrictMode>
 );
 

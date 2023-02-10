@@ -1,0 +1,37 @@
+.siteLayoutContent {
+  min-height: 280px;
+  padding: 24px;
+}
+.header {
+  display: flex;
+  justify-content: flex-end;
+}
+.logo {
+  margin-right: auto;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  width: 120px;
+  height: 31px;
+  background: rgba(255, 255, 255, 0.3);
+}
+.divider {
+  align-self: center;
+  margin-top: 10px;
+  margin-left: 10px;
+  height: 60%;
+  width: 1px;
+  background: linear-gradient(grey, #001529);
+  opacity: 0.5;
+}
+.user {
+  top: 48px;
+}
+.userInfo {
+  color: #fff;
+  padding-left: 10px;
+  cursor: pointer;
+}
+.ant-row-rtl #components-layout-demo-top .logo {
+  float: right;
+  margin: 16px 0 16px 24px;
+}
