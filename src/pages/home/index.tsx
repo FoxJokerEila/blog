@@ -11,7 +11,7 @@ const Home: React.FC<IProps> = function () {
 
   const fetchBlog = () => {
     console.log(page);
-    getHotBlog(page + 1).then((res) => {
+    getHotBlog().then((res) => {
       console.log(res);
     })
     setPage(page + 1)

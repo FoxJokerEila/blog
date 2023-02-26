@@ -10,6 +10,16 @@ import App from '@/layout'
 
 import 'antd/dist/reset.css';
 
+type ThemeData = {
+  borderRadius: number;
+  colorPrimary: string;
+};
+
+const defaultData: ThemeData = {
+  borderRadius: 6,
+  colorPrimary: '#000',
+};
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
@@ -17,7 +27,7 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <ConfigProvider locale={zhCN}>
+    <ConfigProvider theme={{ token: { colorPrimary: defaultData.colorPrimary, borderRadius: defaultData.borderRadius } }} locale={zhCN}>
       <Router>
         <App />
       </Router>

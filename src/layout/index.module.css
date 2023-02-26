@@ -1,6 +1,5 @@
 .siteLayoutContent {
   min-height: 280px;
-  padding: 24px;
 }
 .header {
   display: flex;
@@ -30,6 +29,9 @@
   color: #fff;
   padding-left: 10px;
   cursor: pointer;
+}
+.popoverCon {
+  display: flex;
 }
 .ant-row-rtl #components-layout-demo-top .logo {
   float: right;

@@ -1,11 +1,25 @@
 import * as React from 'react';
+import { useLocation } from 'react-router-dom';
+import { NewBlogType } from '@/pages/blog-edit';
+import { getBlog } from '@/services/blog';
 
-type IProps = any
+const BlogRead: React.FC = function () {
+  const [blog, setBlog] = React.useState<NewBlogType | undefined>(undefined)
+  const location = useLocation()
 
-const BlogRead: React.FC<IProps> = function () {
-  return <div>
-    hello BlogRead
-  </div>
+  React.useEffect(() => {
+    const blogId = location.search.slice(1).split('&')[0].split('=')[1]
+    if (blogId) {
+      getBlog(blogId).then((res) => {
+        setBlog(res.blog[0]);
+      }).catch((err) => {
+        console.log(err);
+      })
+    }
+  }, [location.search]);
+
+  return <div dangerouslySetInnerHTML={{ __html: blog?.content || '' }} >
+  </div >
 }
 
 export default BlogRead
