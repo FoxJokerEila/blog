@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 const { Meta } = Card;
 
 export type UserType = {
-  userId: number
+  user_id: number
   username: string
   email: string
   description: string
@@ -22,7 +22,7 @@ const UserCard: React.FC<UserType> = ({ username, email, description }) => {
     style={{ width: 300 }}
   >
     <Meta
-      description={description}
+      description={['', null, undefined].includes(description) ? '暂无简介' : description}
     />
   </Card>
 }

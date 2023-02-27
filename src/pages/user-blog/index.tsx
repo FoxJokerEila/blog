@@ -7,6 +7,8 @@ import Blog, { BlogType } from '@/components/blog'
 import useUser from '@/hooks/useUser';
 import { getUser } from '@/services/user';
 
+import styles from './index.module.less'
+
 
 
 
@@ -14,14 +16,14 @@ const UserBlog: React.FC = () => {
   const location = useLocation()
   const { userInfo } = useUser()
   const [isMe, setMe] = React.useState(false)
-  const [curUser, setCurUser] = React.useState<UserType>({ userId: -1, username: '', email: '', description: '' })
+  const [curUser, setCurUser] = React.useState<UserType>({ user_id: -1, username: '', email: '', description: '' })
   React.useEffect(() => {
     const urlUserId = location.search.slice(1).split('&').map((str) => {
       const [key, value] = str.split('=')
       return { key, value }
     }).find(it => it.key === 'userId')?.value
     if (urlUserId) {
-      getUser(urlUserId).then((res) => {
+      getUser(Number(urlUserId)).then((res) => {
         setCurUser(res.user[0])
       })
     }
@@ -42,7 +44,7 @@ const UserBlog: React.FC = () => {
     like: 105,
     comment: 52
   }])
-  return <div>
+  return <div className={styles.box}>
     {isMe ? <User  {...userInfo} /> : <User {...curUser} />}
 
     <Divider />

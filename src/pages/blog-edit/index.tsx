@@ -15,7 +15,7 @@ export type NewBlogType = {
   content: string
   createTime: number,
   author: string,
-  userId: number,
+  user_id: number,
   tags: string
 }
 
@@ -42,7 +42,7 @@ const BlogEdit: React.FC<IProps> = function () {
         content: editorRef.current.getContent(),
         author: userInfo.username,
         createTime: new Date().getTime(),
-        userId: userInfo.userId,
+        user_id: userInfo.user_id,
         tags: '',
       }).then(res => {
         console.log(res);
@@ -116,15 +116,11 @@ const BlogEdit: React.FC<IProps> = function () {
             editimage_cors_hosts: ['picsum.photos'],
             images_upload_handler: async function (blobInfo: any, progress: any) {
               let form = new FormData();
-              console.log({ blobInfo });
-              console.log(blobInfo.blob(), blobInfo.filename());
 
               form.set('file', blobInfo.blob(), blobInfo.filename())
-              // console.log({ form });
-
               let res = await upload(form)
-              console.log({ res });
-              return Promise.resolve('localhost:3001/')
+
+              return Promise.resolve('http://localhost:3001/' + res?.data.img_path)
 
             },
             toolbar_mode: 'sliding',

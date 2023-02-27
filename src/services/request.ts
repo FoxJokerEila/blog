@@ -18,9 +18,11 @@ export const get = async function (
   } catch (err: any) {
     if (err?.response.status === 401) {
       alertNotification('提示', '请登录')
-      localStorage.clear()
-      window.location.href = '/login'
-      return
+      setTimeout(() => {
+        localStorage.clear()
+        window.location.href = '/login'
+        return
+      }, 1500)
     }
   }
 }
@@ -38,9 +40,11 @@ export const post = async function (
   } catch (err: any) {
     if (err?.response.status === 401) {
       alertNotification('提示', '请登录')
-      localStorage.clear()
-      window.location.href = '/login'
-      return
+      // setTimeout(() => {
+      //   localStorage.clear()
+      //   window.location.href = '/login'
+      //   return
+      // }, 1500)
     }
   }
 }

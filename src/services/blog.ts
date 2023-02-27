@@ -20,7 +20,7 @@ export const deleteBlog = (blogId: string) => {
 export const upload = (formData: any) => {
   console.log(formData.entries(), 1)
 
-  return post('/blog/upload', formData, {
+  return post('/upload/img', formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }

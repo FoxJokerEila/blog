@@ -4,7 +4,7 @@ import { UserType } from '@/components/user';
 
 const useUser = () => {
   const navigate = useNavigate()
-  const [userInfo, setUserInfo] = React.useState<UserType>({ userId: -1, username: '', email: '', description: '' })
+  const [userInfo, setUserInfo] = React.useState<UserType>({ user_id: -1, username: '', email: '', description: '' })
   React.useEffect(() => {
     const token = localStorage.getItem('token')
     const userinfo = decodeURIComponent(window.atob((localStorage.getItem('userinfo') || '')))

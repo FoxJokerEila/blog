@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Checkbox, Form, Input } from 'antd';
-import { get } from '@/services/request';
-import { login } from '@/services/user';
-import alertNotification from '@/components/common/notification';
-import styles from './index.module.less';
-import Label from '@/components/common/common-label';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { login } from '@/services/user';
+import Label from '@/components/common/common-label';
+import useLogin from '@/hooks/useLogin';
+import styles from './index.module.less';
 
 
 const onFinishFailed = (errorInfo: any) => {
@@ -15,25 +14,14 @@ const onFinishFailed = (errorInfo: any) => {
 
 const Login: React.FC = () => {
   const navigate = useNavigate()
-
+  const { loginFn } = useLogin()
   const onFinish = (values: any) => {
     console.log('Success:', values);
     login(values).then((res) => {
-      if (!res) {
-        alertNotification('提示', '登陆过期')
-        return
-      }
-      if (res.data.code !== 0) {
-        alertNotification('提示', res.data.msg)
-        return
-      }
-      localStorage.setItem('token', res.data.data.token)
-      localStorage.setItem('userinfo', window.btoa(encodeURIComponent(JSON.stringify(res.data.data.userinfo))))
-      navigate('/')
+      loginFn(res)
     }).catch(err => {
       console.log(err);
     })
-
   };
 
   return <div className={styles.box}>
@@ -41,7 +29,6 @@ const Login: React.FC = () => {
       <div className={styles.background}>
       </div>
       <Form
-        name="basic"
         className={styles.form}
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
