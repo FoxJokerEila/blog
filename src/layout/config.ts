@@ -13,8 +13,8 @@ export const menu = [
     path: 'user-blog',
     name: '我的博客'
   },
-  {
-    path: 'user',
-    name: '用户中心'
-  }
+  // {
+  //   path: 'user',
+  //   name: '用户中心'
+  // }
 ]

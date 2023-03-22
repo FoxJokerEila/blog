@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { EditOutlined } from '@ant-design/icons';
-import { Avatar, Card } from 'antd';
+import { Card } from 'antd';
 import { Link } from 'react-router-dom';
 
 const { Meta } = Card;
@@ -10,12 +10,13 @@ export type UserType = {
   username: string
   email: string
   description: string
+  isMe?: boolean
 }
 
-const UserCard: React.FC<UserType> = ({ username, email, description }) => {
+const UserCard: React.FC<UserType> = ({ username, email, description, isMe }) => {
   return <Card
     title={username}
-    actions={[
+    actions={!isMe ? undefined : [
       <Link to='/user'><EditOutlined key="edit" /></Link>
     ]}
     extra={email}

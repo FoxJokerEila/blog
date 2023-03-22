@@ -1,16 +1,18 @@
 import * as React from 'react';
-import { Button, Layout, Menu, Popover, theme } from 'antd';
+import { Button, Divider, Layout, Menu, Popover, theme } from 'antd';
 import clsx from 'clsx'
 import {
   NavLink,
   useRoutes,
   useLocation,
-  useNavigate
+  useNavigate,
+  Link
 } from "react-router-dom";
 import { router } from '@/router';
 import useUser from '@/hooks/useUser';
 import { minHeight, menu, loginHeight } from './config';
 import styles from './index.module.less'
+import { MailOutlined } from '@ant-design/icons';
 
 const { Header, Content, Footer } = Layout;
 
@@ -32,11 +34,26 @@ const App: React.FC<IProps> = () => {
   //   token: { colorBgContainer },
   // } = theme.useToken();
 
-  React.useEffect(() => {
-    console.log(location.pathname.slice(1));
+  const UserPop = () => {
+    return <div className={styles.popoverCon}>
+      <div className={styles.follow}>
+        <span><Link to='/fans'>粉丝：20</Link></span>
+        <span><Link to='/follows'>关注：10</Link></span>
+      </div>
+      <Divider style={{ margin: '12px 0' }} />
+      <span className={styles.description}>{userInfo.description}</span>
+      <span className={styles.email}><MailOutlined />&nbsp;&nbsp;{userInfo.email}</span>
+      <div className={styles.logOutBtn}><Button onClick={() => {
+        localStorage.clear();
+        window.location.href = '/login'
+      }}>退出登录</Button>
+      </div>
+    </div>
+  }
 
+  React.useEffect(() => {
     setState({
-      selectedKey: location.pathname.slice(1),
+      selectedKey: location.search.startsWith('?') ? '***' : location.pathname.slice(1),
       isLogin: ['login', 'register', 'blog-edit'].includes(location.pathname.slice(1))
     })
   }, [location])
@@ -66,10 +83,9 @@ const App: React.FC<IProps> = () => {
             })}
           />
           <div className={styles.divider}></div>
-          <Popover arrowPointAtCenter overlayClassName={styles.user} placement="bottom" title={userInfo.username} content={<div className={styles.popoverCon}><span>邮箱：{userInfo.email}</span> <span><Button onClick={() => {
-            localStorage.clear();
-            window.location.href = '/login'
-          }}>退出登录</Button></span></div>}>
+          <Popover arrowPointAtCenter overlayClassName={styles.user} placement="bottom" title={<div className={styles.username}>{userInfo.username}</div>}
+            content={<UserPop />}
+          >
             <div className={styles.userInfo}>
               {userInfo.username}
             </div>

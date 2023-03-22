@@ -25,13 +25,39 @@
 .user {
   top: 48px;
 }
+.user :global .ant-popover-arrow {
+  display: none;
+}
 .userInfo {
   color: #fff;
   padding-left: 10px;
   cursor: pointer;
 }
+.username {
+  text-align: center;
+}
 .popoverCon {
   display: flex;
+  flex-direction: column;
+}
+.follow {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+}
+.description {
+  white-space: nowrap;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.45);
+  margin-bottom: 10px;
+}
+.email {
+  white-space: nowrap;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.logOutBtn {
+  text-align: center;
 }
 .ant-row-rtl #components-layout-demo-top .logo {
   float: right;

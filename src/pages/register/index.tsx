@@ -16,7 +16,7 @@ const Register: React.FC = () => {
   const onFinish = (values: any) => {
     console.log('Success:', values);
     post('/user/register', values).then((res) => {
-      if (res?.data.code === 0) {
+      if (res?.code === 0) {
         alertNotification('提示', '注册成功')
         setTimeout(() => {
           navigate('/login')
@@ -26,7 +26,6 @@ const Register: React.FC = () => {
   };
   return (
     <div className={styles.box}>
-
       <div className={styles.container}>
         <div className={styles.background}>
         </div>

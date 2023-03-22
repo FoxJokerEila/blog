@@ -1,0 +1,23 @@
+.bubble {
+  position: relative;
+}
+
+.ball {
+  border-radius: 50%;
+  position: relative;
+  animation: float 2s infinite;
+}
+
+@keyframes float {
+  from {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(10%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
