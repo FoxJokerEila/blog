@@ -1,9 +1,19 @@
+.layout {
+  background: url('/public/cool-background(1).png') no-repeat;
+  background-size: cover;
+}
 .siteLayoutContent {
   min-height: 280px;
 }
 .header {
   display: flex;
   justify-content: flex-end;
+}
+.header :global :where(.css-dev-only-do-not-override-8a2l44).ant-menu-dark {
+  background: transparent;
+}
+.header :global :where(.css-dev-only-do-not-override-8a2l44).ant-menu-dark .ant-menu-item-selected {
+  background: #424242;
 }
 .logo {
   margin-right: auto;

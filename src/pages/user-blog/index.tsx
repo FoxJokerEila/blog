@@ -3,7 +3,7 @@ import { Button, Card, Divider, Input, Tooltip } from 'antd';
 import { useLocation } from 'react-router-dom';
 import User, { UserType } from '@/components/user'
 import Blog, { BlogType } from '@/components/blog'
-
+import Bubble from '@/components/bubble';
 import useUser from '@/hooks/useUser';
 import { getUser } from '@/services/user';
 
@@ -12,6 +12,7 @@ import { addTag, getBlogByUser, getTags } from '@/services/blog';
 import CustomEmpty from '@/components/common/empty';
 import useSearch from '@/hooks/useSearch';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+
 
 
 
@@ -69,20 +70,25 @@ const UserBlog: React.FC = () => {
   const [value, setValue] = React.useState('')
   return <div className={styles.box}>
     <User {...state.user} isMe={isMe} />
-    <Input value={value} onChange={(e) => {
+    {/* <Input value={value} onChange={(e) => {
       setValue(e.target.value)
     }}></Input>
     <Button onClick={() => addTag(value)}>添加</Button>
-    <Button onClick={() => getTags()}>拉取</Button>
-    <Divider style={{ margin: '12px 0' }} />
+    <Button onClick={() => getTags()}>拉取</Button> */}
+    <Divider style={{ margin: '6px 0' }} />
     <div className={styles.content}>
       <Card title={state.user && state.user.user_id === userInfo.user_id ? '我的博客' : '博客列表'} bordered={false} style={{ width: '100%' }}>
         {state?.blogs ? state.blogs.map(item => {
           return <Blog key={item.blog_id} {...item} isMe={isMe} refetch={fetchBlog} />
         }) : <CustomEmpty />}
       </Card>
-      <Card title={<div>博客气泡 <Tooltip title="当您的博客被推荐给其他用户时，会以如下形式展示。"><QuestionCircleOutlined /></Tooltip></div>} className={styles.rightCard}>
-
+      <Card
+        title={<div>博客气泡 <Tooltip title="当您的博客被推荐给其他用户时，会以如下形式展示。"><QuestionCircleOutlined /></Tooltip></div>}
+        className={styles.rightCard}
+        bodyStyle={{ display: 'flex', flexWrap: 'wrap' }}>
+        {state.blogs?.map((item: BlogType, index: number) => {
+          return <Bubble onClick={() => window.open(`${window.location.origin}/blog-read?blog_id=${item.blog_id}`)} key={index} size={90} title={item.title} titleLine={2} titleWidth="90%" floatSizeRangeConst={0.5} floatMarginConst={0.1} wrapWidth={115} />
+        })}
       </Card>
     </div>
 

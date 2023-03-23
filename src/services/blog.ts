@@ -34,7 +34,7 @@ export const upload = (formData: any) => {
   })
 }
 
-export const clickBlog = (user_id: number, blog_id: string) => {
+export const clickBlog = (user_id: number, blog_id: number) => {
   return post('/blog/click', {
     user_id,
     blog_id,
@@ -43,7 +43,7 @@ export const clickBlog = (user_id: number, blog_id: string) => {
   })
 }
 
-export const viewBlog = (user_id: number, blog_id: string) => {
+export const viewBlog = (user_id: number, blog_id: number) => {
   return post('/blog/view', {
     user_id,
     blog_id,
@@ -62,4 +62,8 @@ export const getTags = () => {
 
 export const like = (blog_id: number, like: boolean) => {
   return post('/blog/like', { blog_id, like })
+}
+
+export const recommend = (page: number, size: number) => {
+  return get('/blog/recommend', { page, size })
 }

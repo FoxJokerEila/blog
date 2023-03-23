@@ -1,5 +1,6 @@
 export const minHeight = 'calc(100vh - 128px)'
 export const loginHeight = 'calc(100vh - 64px)'
+export const editHeight = '100vh'
 export const menu = [
   {
     path: '',
@@ -12,7 +13,7 @@ export const menu = [
   {
     path: 'user-blog',
     name: '我的博客'
-  },
+  }
   // {
   //   path: 'user',
   //   name: '用户中心'

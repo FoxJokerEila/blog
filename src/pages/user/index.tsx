@@ -36,7 +36,7 @@ const User: React.FC<IProps> = function () {
   }
 
   return <div className={styles.box} style={{ height: minHeight }}>
-    <Card title="编辑个人信息" bordered={false} style={{ height: '100%' }} bodyStyle={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'calc(100% - 56px)' }}>
+    <Card title="编辑个人信息" bordered={false} style={{ height: 'calc(100% - 12px)' }} bodyStyle={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'calc(100% - 56px)' }}>
       <Form
         form={form}
         layout="vertical"

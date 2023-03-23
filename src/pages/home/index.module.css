@@ -1,5 +1,9 @@
+.box :global :where(.css-dev-only-do-not-override-8a2l44).ant-btn-primary {
+  background: #272727;
+}
 .refreshBtn {
-  float: right;
+  float: left;
+  margin-top: 24px;
 }
 .bubble {
   display: flex;

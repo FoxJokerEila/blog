@@ -10,7 +10,7 @@ import {
 } from "react-router-dom";
 import { router } from '@/router';
 import useUser from '@/hooks/useUser';
-import { minHeight, menu, loginHeight } from './config';
+import { menu, minHeight, loginHeight, editHeight } from './config';
 import styles from './index.module.less'
 import { MailOutlined } from '@ant-design/icons';
 
@@ -28,11 +28,18 @@ const App: React.FC<IProps> = () => {
     selectedKey: '',
     // 是否处于 login 或 register 页面
     isLogin: true,
+    isEdit: false,
   })
 
-  // const {
-  //   token: { colorBgContainer },
-  // } = theme.useToken();
+  const height = React.useMemo(() => {
+    if (state.isLogin) {
+      return loginHeight
+    }
+    if (state.isEdit) {
+      return editHeight
+    }
+    return minHeight
+  }, [state.isEdit, state.isLogin])
 
   const UserPop = () => {
     return <div className={styles.popoverCon}>
@@ -54,7 +61,8 @@ const App: React.FC<IProps> = () => {
   React.useEffect(() => {
     setState({
       selectedKey: location.search.startsWith('?') ? '***' : location.pathname.slice(1),
-      isLogin: ['login', 'register', 'blog-edit'].includes(location.pathname.slice(1))
+      isLogin: ['login', 'register'].includes(location.pathname.slice(1)),
+      isEdit: ['blog-edit'].includes(location.pathname.slice(1)),
     })
   }, [location])
 
@@ -66,9 +74,8 @@ const App: React.FC<IProps> = () => {
 
   return (
     <Layout className={styles.layout}>
-      {!state.isLogin
-        && <Header className={styles.header}>
-          <div className={styles.logo} />
+      {!state.isLogin && !state.isEdit
+        && <Header className={styles.header} style={{ background: 'linear-gradient(90deg, #343434, black)' }}>
           <Menu
             theme="dark"
             mode="horizontal"
@@ -77,7 +84,7 @@ const App: React.FC<IProps> = () => {
               return {
                 key: item.path,
                 label: <NavLink
-                  onClick={() => setState((pre) => ({ selectedKey: String(item.path), isLogin: pre.isLogin }))}
+                  onClick={() => setState((pre) => ({ ...pre, selectedKey: String(item.path) }))}
                   to={item.path}>{item.name}</NavLink>,
               };
             })}
@@ -91,12 +98,12 @@ const App: React.FC<IProps> = () => {
             </div>
           </Popover>
         </Header>}
-      <Content style={{ padding: state.isLogin ? 0 : '0 50px', minHeight: state.isLogin ? loginHeight : minHeight }}>
-        <div className={styles.siteLayoutContent} style={{ height: state.isLogin ? loginHeight : 'auto' }}>
+      <Content style={{ padding: state.isLogin || state.isEdit ? 0 : '0 50px', minHeight: height }}>
+        <div className={styles.siteLayoutContent} style={{ minHeight: height }}>
           {routeElement}
         </div>
       </Content>
-      <Footer style={{ textAlign: 'center' }}>Blog ©2023 Created by Star</Footer>
+      {!state.isEdit && <Footer style={{ textAlign: 'center', background: 'transparent' }}>Blog ©2023 Created by Star</Footer>}
     </Layout >
   );
 };

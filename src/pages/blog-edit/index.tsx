@@ -30,7 +30,7 @@ const BlogEdit: React.FC<IProps> = function () {
   const [content, setContent] = React.useState<string>('')
   const [initCon, setInitCon] = React.useState<string>('')
   const [tags, setTags] = React.useState<any[]>([])
-  const [selectedTags, setSelected] = React.useState<string | undefined>()
+  const [selectedTags, setSelected] = React.useState<string | number[] | undefined>()
   const [visible, setVisible] = React.useState<boolean>(false)
   const editorRef = React.useRef<Editor['editor'] | any>(null)
   const navigate = useNavigate()
@@ -39,12 +39,13 @@ const BlogEdit: React.FC<IProps> = function () {
 
   const create = () => {
     if (editorRef.current) {
+
       const data = {
         title: title,
         content: editorRef.current.getContent(),
         author: userInfo.username,
         user_id: userInfo.user_id,
-        tags: selectedTags || '',
+        tags: typeof selectedTags === 'string' ? selectedTags : selectedTags?.join(',') || '',
       }
       if (searchFinder('blog_id')) {
         updateBlog(data).then(res => {
@@ -116,7 +117,7 @@ const BlogEdit: React.FC<IProps> = function () {
           optionFilterProp="children"
           onChange={onChange}
           onSearch={onSearch}
-          value={selectedTags}
+          value={selectedTags as string}
           filterOption={(input, option) =>
             (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
           }
@@ -143,7 +144,7 @@ const BlogEdit: React.FC<IProps> = function () {
           apiKey='8zlimkzi3k0orq35s4mro8mpbzmre9pm4tbu3yoryqenkeir'
           init={{
             language: 'zh-Hans',
-            height: 'calc(100vh - 150px)',
+            height: 'calc(100vh - 92px)',
             resize: false,
             menubar: false,
             plugins: 'preview importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap emoticons',

@@ -7,9 +7,26 @@
 .title {
   color: rgba(0, 0, 0, 0.65);
   cursor: pointer;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 1;
+  /* 显示 3 行文本 */
+  line-clamp: 1;
 }
 .title:hover {
   color: #000000;
+}
+.abstract {
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  color: rgba(0, 0, 0, 0.45);
 }
 .left {
   flex: 1;

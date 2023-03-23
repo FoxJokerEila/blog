@@ -1,16 +1,18 @@
 import * as React from 'react';
 import { useLocation } from 'react-router-dom';
 import dayjs from 'dayjs'
-import { NewBlogType } from '@/pages/blog-edit';
+import { Badge, Button, Card, Divider, Tag } from 'antd';
+import { ClockCircleFilled, LikeFilled, LikeOutlined } from '@ant-design/icons';
 import { getBlog, getBlogByUser, like } from '@/services/blog';
 import User, { UserType } from '@/components/user';
-import useSearch from '@/hooks/useSearch';
-import styles from './index.module.less'
-import { Badge, Button, Card, Divider, Tag } from 'antd';
 import Blog, { BlogType } from '@/components/blog';
-import { ClockCircleFilled, LikeFilled, LikeOutlined } from '@ant-design/icons';
+import useSearch from '@/hooks/useSearch';
 import useRequest from '@/hooks/useRequest';
 import useUser from '@/hooks/useUser';
+import { handleLikeCount } from '@/utils';
+import styles from './index.module.less'
+
+
 
 const BlogRead: React.FC = function () {
   const [detail, setDetail] = React.useState<{ blog: BlogType | undefined, user: UserType, tags: { id: number, name: string }[] }>({ blog: undefined, user: { user_id: -1, username: '', email: '', description: '' }, tags: [] })
@@ -53,18 +55,6 @@ const BlogRead: React.FC = function () {
         setUserInfo(() => res.user)
       }
     })
-  }
-
-  const handleLikeCount = (count: number = 0) => {
-    if (count < 1000) {
-      return count
-    }
-    if (count < 10000) {
-      const k = (count / 1000).toFixed(0)
-      return `${k}k`
-    }
-    const w = (count / 10000).toFixed(1)
-    return `${w}w`
   }
 
   const { data: hotList } = useRequest<BlogType[]>(async () => {

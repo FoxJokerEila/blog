@@ -8,6 +8,7 @@ import styles from './index.module.less'
 import record from '@/recorder';
 import { deleteBlog } from '@/services/blog';
 import alertNotification from '../common/notification';
+import { handleLikeCount } from '@/utils';
 
 
 dayjs.extend(utc); // 扩展 Day.js 的 UTC 插件
@@ -17,6 +18,7 @@ dayjs.extend(timezone); // 扩展 Day.js 的时区插件
 export type BlogType = {
   blog_id: number
   title: string
+  abstract?: string
   author?: string
   create_time?: string
   content?: string
@@ -28,7 +30,7 @@ export type BlogType = {
   tags?: string
 }
 
-const Blog: React.FC<BlogType & { type?: 'default' | 'mini', refetch?: () => void }> = ({ blog_id, title, author, create_time, like, comment, user_id, isMe, is_liked, type = 'default', refetch }) => {
+const Blog: React.FC<BlogType & { type?: 'default' | 'mini', refetch?: () => void }> = ({ blog_id, title, abstract, author, create_time, like, comment, user_id, isMe, is_liked, type = 'default', refetch }) => {
   const handleDelete = (e: any) => {
     e.stopPropagation()
     deleteBlog(blog_id).then((res) => {
@@ -50,14 +52,15 @@ const Blog: React.FC<BlogType & { type?: 'default' | 'mini', refetch?: () => voi
   return type === 'default' ? <Card className={styles.blog}
     bordered={false}
     onClick={() => {
-      record('click', user_id, blog_id)
+      !isMe && record('click', { blog_id })
       window.open(`${window.location.origin}/blog-read?blog_id=${blog_id}`)
     }}
   >
     <div className={styles.content}>
       <div className={styles.left}>
         <div><h3 className={styles.title}>{title}</h3></div>
-        <span className={styles.likeInfo}>{is_liked ? <LikeFilled /> : <LikeOutlined />}{like}</span>
+        <div className={styles.abstract}>{abstract}</div>
+        <span className={styles.likeInfo}>{is_liked ? <LikeFilled /> : <LikeOutlined />}&nbsp;{handleLikeCount(like)}</span>
         <span>{comment}</span>
       </div>
 
@@ -82,7 +85,7 @@ const Blog: React.FC<BlogType & { type?: 'default' | 'mini', refetch?: () => voi
     </div>
 
   </Card> : <div className={styles.blog} onClick={() => {
-    record('click', user_id, blog_id)
+    !isMe && record('click', { blog_id })
     window.open(`${window.location.origin}/blog-read?blog_id=${blog_id}`)
   }}>
     <span className={styles.title}>

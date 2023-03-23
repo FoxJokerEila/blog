@@ -5,6 +5,10 @@ import Bubble from '@/components/bubble'
 import styles from './index.module.less'
 import useSearch from '@/hooks/useSearch';
 import { minHeight } from '@/layout/config';
+import useRequest from '@/hooks/useRequest';
+import { recommend } from '@/services/blog';
+import { BlogType } from '@/components/blog';
+import record from '@/recorder';
 
 type IProps = any
 
@@ -13,19 +17,20 @@ const Home: React.FC<IProps> = function () {
   const [page, setPage] = React.useState<number>(0)
   const { search } = useSearch()
 
-  const fetchBlog = () => {
-    console.log(page);
-    getHotBlog().then((res) => {
-      console.log(res);
-    })
-    setPage(page + 1)
-  }
+  const { data = [] } = useRequest(async () => {
+    const res = await recommend(page, 10);
+    return res?.blogs;
+  }, { deps: [page] })
 
-  return <div style={{ minHeight: minHeight }}>
-    <Button onClick={fetchBlog} type="primary" className={styles.refreshBtn}>换一批</Button>
+  const fetchBlog = React.useCallback(() => {
+    setPage(page + 1)
+  }, [page])
+
+  return <div className={styles.box} style={{ minHeight: minHeight }}>
+    <Button onClick={() => fetchBlog()} type="primary" className={styles.refreshBtn}>换一批</Button>
     <div style={{ maxHeight: minHeight, position: 'relative', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-evenly' }}>
-      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item, index) => {
-        return <Bubble key={index} />
+      {data?.map((item: BlogType, index: number) => {
+        return <Bubble key={index} titleSize={16} title={item.title} onClick={() => { record('click', { blog_id: item.blog_id }); window.open(`${window.location.origin}/blog-read?blog_id=${item.blog_id}`) }} />
       })}
     </div>
 
