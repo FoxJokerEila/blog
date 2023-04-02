@@ -12,6 +12,7 @@ import { addTag, getBlogByUser, getTags } from '@/services/blog';
 import CustomEmpty from '@/components/common/empty';
 import useSearch from '@/hooks/useSearch';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import useUserStore from '@/store/userContext';
 
 
 
@@ -25,70 +26,58 @@ const UserBlog: React.FC = () => {
     user: UserType,
     blogs: BlogType[]
   }>({
-    user: { user_id: -1, username: '', email: '', description: '' },
+    user: { user_id: -1, username: '', email: '', description: '', is_me: false, privacy: {} },
     blogs: []
   })
-  const [isMe, setIsMe] = React.useState<boolean>(false)
-
 
   const fetchBlog = () => {
     const userId = searchFinder('user_id') || userInfo.user_id
     getBlogByUser(userId).then((res) => {
-      console.log(res);
       setState({ user: userInfo, blogs: res?.list })
     })
   }
 
-  React.useEffect(() => {
-    const urlUserId = searchFinder('user_id')
+  const fetchUser = () => {
+    const userId = searchFinder('user_id') || userInfo.user_id
+    getUser(Number(userId)).then((res) => {
+      setState((pre) => ({ user: res?.user, blogs: pre.blogs }))
+    })
+  }
 
-    if (urlUserId) {
-      Promise.all([getUser(Number(urlUserId)), getBlogByUser(Number(urlUserId))]).then((res) => {
-        setState({
-          user: res[0]?.user,
-          blogs: res[1]?.list
-        })
+  React.useEffect(() => {
+    const urlUserId = searchFinder('user_id') || userInfo.user_id
+    Promise.all([getUser(Number(urlUserId)), getBlogByUser(Number(urlUserId))]).then((res) => {
+      setState({
+        user: res[0]?.user,
+        blogs: res[1]?.list
       })
-    } else {
-      getBlogByUser(userInfo.user_id).then((res) => {
-        console.log(res);
-        setState({ user: userInfo, blogs: res?.list })
-      })
-    }
+    })
   }, [userInfo, location, searchFinder])
 
-  React.useEffect(() => {
-    if (state.user.user_id === -1) return
-
-    setIsMe(() => {
-      console.log(121);
-      return (state.user && state.user.user_id === userInfo.user_id)
-    })
-
-  }, [state, userInfo.user_id])
-
-  const [value, setValue] = React.useState('')
   return <div className={styles.box}>
-    <User {...state.user} isMe={isMe} />
-    {/* <Input value={value} onChange={(e) => {
+    <div className={styles.left}>
+      <User {...state.user} user={state.user} refreshData={fetchUser} />
+      {/* <Input value={value} onChange={(e) => {
       setValue(e.target.value)
     }}></Input>
     <Button onClick={() => addTag(value)}>添加</Button>
     <Button onClick={() => getTags()}>拉取</Button> */}
-    <Divider style={{ margin: '6px 0' }} />
-    <div className={styles.content}>
-      <Card title={state.user && state.user.user_id === userInfo.user_id ? '我的博客' : '博客列表'} bordered={false} style={{ width: '100%' }}>
-        {state?.blogs ? state.blogs.map(item => {
-          return <Blog key={item.blog_id} {...item} isMe={isMe} refetch={fetchBlog} />
-        }) : <CustomEmpty />}
-      </Card>
-      <Card
+      <Divider style={{ margin: '6px 0' }} />
+      {state?.blogs?.length ? <Card
         title={<div>博客气泡 <Tooltip title="当您的博客被推荐给其他用户时，会以如下形式展示。"><QuestionCircleOutlined /></Tooltip></div>}
-        className={styles.rightCard}
+        className={styles.bubbleCard}
         bodyStyle={{ display: 'flex', flexWrap: 'wrap' }}>
         {state.blogs?.map((item: BlogType, index: number) => {
           return <Bubble onClick={() => window.open(`${window.location.origin}/blog-read?blog_id=${item.blog_id}`)} key={index} size={90} title={item.title} titleLine={2} titleWidth="90%" floatSizeRangeConst={0.5} floatMarginConst={0.1} wrapWidth={115} />
         })}
+      </Card> : null}
+    </div>
+
+    <div className={styles.content}>
+      <Card title={state.user && state.user.user_id === userInfo.user_id ? '我的博客' : '博客列表'} bordered={false} style={{ width: '100%' }}>
+        {state?.blogs?.length ? state.blogs.map(item => {
+          return <Blog key={item.blog_id} {...item} refetch={fetchBlog} />
+        }) : <CustomEmpty description={!state.user?.is_me ? '该用户没有发布过博客' : '去发布一篇博客吧'} />}
       </Card>
     </div>
 

@@ -7,6 +7,7 @@ import CommentPage from "@/pages/comment-page";
 import Lost from "@/pages/404";
 import Login from '@/pages/login';
 import Register from '@/pages/register';
+import FollowFan from '@/pages/follow-fan';
 
 export const router = [
   {
@@ -40,6 +41,10 @@ export const router = [
   {
     path: "/comment-page",
     element: <CommentPage />,
+  },
+  {
+    path: '/follow-fan',
+    element: <FollowFan />,
   },
   {
     path: '*',

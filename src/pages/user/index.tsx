@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Button, Card, Form, Input } from 'antd';
 import { useForm } from 'antd/es/form/Form';
-import UserCard from '@/components/user';
 import useUser from '@/hooks/useUser'
 import { get } from '@/services/request';
 import styles from './index.module.less'
@@ -16,9 +15,6 @@ const User: React.FC<IProps> = function () {
   const [form] = useForm()
   const { userInfo } = useUser()
   const { loginFn } = useLogin()
-  const handleClick = () => {
-    console.log(userInfo);
-  }
 
   React.useEffect(() => {
     form.setFieldsValue({

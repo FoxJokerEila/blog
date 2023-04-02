@@ -5,26 +5,30 @@ interface UseRequestOptions<T> {
   deps: any[]
 }
 
-type OptionsType = {
+type OptionsType<T> = {
   deps: any[]
+  initialValue?: T
 }
 
 function useRequest<T>(
-  request: () => Promise<T>,
-  options: OptionsType = {
-    deps: []
+  request: (params?: any) => Promise<T>,
+  options: OptionsType<T> = {
+    deps: [],
+    initialValue: undefined
   }
 ) {
+  const { deps, initialValue } = options
   const [loading, setLoading] = React.useState(false);
-  const [data, setData] = React.useState<T | null>(null);
+  const [data, setData] = React.useState<T | undefined>(initialValue);
   const [error, setError] = React.useState<Error | null>(null);
-  const { deps } = options
-  const fetchData = React.useCallback(async () => {
+
+  const fetchData = React.useCallback(async (params?: any) => {
     setLoading(true);
     setError(null);
 
     try {
-      const result = await request();
+      const result = await request(params);
+      console.log({ result })
       setData(result);
     } catch (e: any) {
       setError(e);
@@ -37,7 +41,7 @@ function useRequest<T>(
     fetchData()
   }, [...deps])
 
-  return { loading, data, error, fetchData };
+  return { loading, data, error, fetchData, setData };
 }
 
 export default useRequest;

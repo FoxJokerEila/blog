@@ -12,7 +12,10 @@ import { router } from '@/router';
 import useUser from '@/hooks/useUser';
 import { menu, minHeight, loginHeight, editHeight } from './config';
 import styles from './index.module.less'
-import { MailOutlined } from '@ant-design/icons';
+import { ExportOutlined, MailOutlined } from '@ant-design/icons';
+import { UserType } from '@/components/user';
+import UserContext from '@/store/userContext';
+import UserPop from './user-pop';
 
 const { Header, Content, Footer } = Layout;
 
@@ -22,7 +25,7 @@ const App: React.FC<IProps> = () => {
   const routeElement = useRoutes(router)
   const navigate = useNavigate()
   const location = useLocation()
-  const { userInfo } = useUser()
+  const { userInfo, setUserInfo } = useUser()
 
   const [state, setState] = React.useState({
     selectedKey: '',
@@ -41,22 +44,29 @@ const App: React.FC<IProps> = () => {
     return minHeight
   }, [state.isEdit, state.isLogin])
 
-  const UserPop = () => {
-    return <div className={styles.popoverCon}>
-      <div className={styles.follow}>
-        <span><Link to='/fans'>粉丝：20</Link></span>
-        <span><Link to='/follows'>关注：10</Link></span>
-      </div>
-      <Divider style={{ margin: '12px 0' }} />
-      <span className={styles.description}>{userInfo.description}</span>
-      <span className={styles.email}><MailOutlined />&nbsp;&nbsp;{userInfo.email}</span>
-      <div className={styles.logOutBtn}><Button onClick={() => {
-        localStorage.clear();
-        window.location.href = '/login'
-      }}>退出登录</Button>
-      </div>
-    </div>
-  }
+  // const UserPart = (userInfo: UserType) => {
+  //   console.log({ userInfo });
+  //   return <Popover arrowPointAtCenter overlayClassName={styles.user} placement="bottom" title={<div className={styles.username}>{userInfo.username}</div>}
+  //     content={<div className={styles.popoverCon}>
+  //       <div className={styles.follow}>
+  //         <span><Link to='/fans'>粉丝：{userInfo?.fans}</Link></span>
+  //         <span><Link to='/follows'>关注：{userInfo?.following}</Link></span>
+  //       </div>
+  //       <Divider style={{ margin: '12px 0' }} />
+  //       <span className={styles.description}>{userInfo.description}</span>
+  //       <span className={styles.email}><MailOutlined />&nbsp;&nbsp;{userInfo.email}</span>
+  //       <div className={styles.logOutBtn}><Button icon={<ExportOutlined />} onClick={() => {
+  //         localStorage.clear();
+  //         window.location.href = '/login'
+  //       }}>退出登录</Button>
+  //       </div>
+  //     </div>}
+  //   >
+  //     <div className={styles.userInfo}>
+  //       {userInfo.username}
+  //     </div>
+  //   </Popover>
+  // }
 
   React.useEffect(() => {
     setState({
@@ -90,20 +100,14 @@ const App: React.FC<IProps> = () => {
             })}
           />
           <div className={styles.divider}></div>
-          <Popover arrowPointAtCenter overlayClassName={styles.user} placement="bottom" title={<div className={styles.username}>{userInfo.username}</div>}
-            content={<UserPop />}
-          >
-            <div className={styles.userInfo}>
-              {userInfo.username}
-            </div>
-          </Popover>
+          <UserPop />
         </Header>}
       <Content style={{ padding: state.isLogin || state.isEdit ? 0 : '0 50px', minHeight: height }}>
         <div className={styles.siteLayoutContent} style={{ minHeight: height }}>
           {routeElement}
         </div>
       </Content>
-      {!state.isEdit && <Footer style={{ textAlign: 'center', background: 'transparent' }}>Blog ©2023 Created by Star</Footer>}
+      {!state.isEdit && <Footer style={{ color: 'white', textAlign: 'center', background: 'transparent' }}>Blog ©2023 Created by Star</Footer>}
     </Layout >
   );
 };

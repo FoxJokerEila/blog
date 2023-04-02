@@ -1,4 +1,4 @@
-import { NewBlogType } from '@/pages/blog-edit'
+import { NewBlogType, CommentType } from '@/pages/blog-edit'
 import { get, post } from './request'
 
 export const getBlog = (blog_id: number) => {
@@ -64,6 +64,26 @@ export const like = (blog_id: number, like: boolean) => {
   return post('/blog/like', { blog_id, like })
 }
 
-export const recommend = (page: number, size: number) => {
-  return get('/blog/recommend', { page, size })
+export const recommend = (id_list: number[]) => {
+  return post('/blog/recommend', { id_list })
+}
+
+export const comment = (comment: CommentType) => {
+  return post('/blog/comment', { comment })
+}
+
+export const deleteComment = (comment_id: number, secondary_id?: string) => {
+  return post('/blog/deleteComment', { comment_id, secondary_id })
+}
+
+export const getComment = (blog_id: number) => {
+  return get('/blog/getComment', { blog_id })
+}
+
+export const updateBlogPrivacy = (
+  blog_id: number,
+  user_id: number,
+  privacy: any
+) => {
+  return post('/blog/updateBlogPrivacy', { blog_id, user_id, privacy })
 }

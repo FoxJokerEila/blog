@@ -1,6 +1,8 @@
 import alertNotification from '@/components/common/notification';
+import useUserStore from '@/store/userContext';
 
 const useLogin = (() => {
+  const setUser = useUserStore(set => set.setUser)
   const loginFn = (res: any) => {
     if (!res) {
       alertNotification('提示', '登陆过期')
@@ -12,7 +14,12 @@ const useLogin = (() => {
     }
     localStorage.setItem('token', res.data.token)
     localStorage.setItem('userinfo', window.btoa(encodeURIComponent(JSON.stringify(res.data.userinfo))))
-    window.location.href = '/'
+    setUser(res.data.userinfo)
+    console.log(res.data.userinfo);
+
+    setTimeout(() => {
+      window.location.href = '/'
+    }, 500)
   }
   return { loginFn }
 })

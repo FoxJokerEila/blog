@@ -19,7 +19,21 @@ export type NewBlogType = {
   tags: string,
 }
 
-
+export type CommentType = {
+  content: string
+  blog_id: number
+  id?: number
+  user_id?: number
+  secondary_id?: string
+  commented_user_id?: number
+  username?: string
+  commented_username?: string
+  create_time?: string
+  parent_level_id?: number
+  target_comment_id?: string
+  comment_privacy_level?: number
+  secondary_comments?: CommentType[]
+}
 
 const onSearch = (value: string) => {
   console.log('search:', value);
@@ -155,7 +169,7 @@ const BlogEdit: React.FC<IProps> = function () {
               form.set('file', blobInfo.blob(), blobInfo.filename())
               let res = await upload(form)
 
-              return Promise.resolve('http://localhost:3001/' + res?.data.img_path)
+              return Promise.resolve('http://localhost:3001/' + res?.img_path)
 
             },
             toolbar_mode: 'sliding',

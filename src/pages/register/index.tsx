@@ -16,12 +16,15 @@ const Register: React.FC = () => {
   const onFinish = (values: any) => {
     console.log('Success:', values);
     post('/user/register', values).then((res) => {
-      if (res?.code === 0) {
-        alertNotification('提示', '注册成功')
-        setTimeout(() => {
-          navigate('/login')
-        }, 1500)
-      }
+      setTimeout(() => {
+        navigate('/login')
+      }, 1500)
+      // if (res?.code === 0) {
+      //   alertNotification('提示', '注册成功')
+      //   setTimeout(() => {
+      //     navigate('/login')
+      //   }, 1500)
+      // }
     })
   };
   return (
