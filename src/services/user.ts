@@ -49,3 +49,27 @@ export const updatePrivacy = (privacy: PrivacyType) => {
 export const refetchUser = () => {
   return get('/user/refetchUser')
 }
+
+export const getFavor = () => {
+  return get('/user/getFavor')
+}
+
+export const updateFavor = (current: number) => {
+  return post('/user/updateFavor', { current })
+}
+
+export const addFavor = (name: string) => {
+  return post('/user/addFavor', { name })
+}
+
+export const deleteFavor = (id: number) => {
+  return post('/user/deleteFavor', { id })
+}
+
+export const resetFavor = (id: number) => {
+  return post('/user/resetFavor', { id })
+}
+
+export const renameFavor = (id: number, name: string) => {
+  return post('/user/renameFavor', { id, name })
+}

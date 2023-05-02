@@ -22,6 +22,7 @@ export type UserType = {
   user?: UserType
   fans?: number
   following?: number
+  favor?: { current: number, list: { id: number, name: string, total: number, list: { id: number, name: string, num: number, percent: number }[] }[] }
 }
 
 export type PrivacyType = {

@@ -19,12 +19,12 @@ interface Props {
 
 const colors = [['#FFCB52', '#FF7B02'], ['#C165DD', '#5C27FE'], ['#2AFEB7', '#0BC792'], ['#5581F1', '#1153FC'], ['#FACD68', '#FC76B3'], ['#00F7A7', '#04F5ED'], ['#1DE5E2', '#B588F7'], ['#FFE324', '#FFB533']]
 
-const Bubble: React.FC<Props> = ({ title, titleSize = 14, size = 100, floatSizeRangeConst = 1, floatMarginConst = 1, wrapWidth, color, titleLine = 3, titleWidth = '95%', onClick }) => {
+const Bubble: React.FC<Props> = ({ title, titleSize = 14, size = 100, floatSizeRangeConst = 1, floatMarginConst = 1, wrapWidth, titleLine = 3, titleWidth = '95%', onClick }) => {
   const [position, setPosition] = useState(0); // 球的位置
   const [border] = useState(Math.random() * 20);
   const [direction, setDirection] = useState(1); // 球的运动方向，1 表示向下，-1 表示向上
   const [speed] = useState(Math.random() * 1)
-  const [idx] = useState(Math.floor(Math.random() * 8))
+  const [idx] = useState(window.crypto.getRandomValues(new Uint8Array(1))[0] % 8)
   const [opacity] = useState(Math.random() + 0.8)
   const [innerSize] = useState(size + 10 + floatSizeRangeConst * Math.random() * 50)
   const [outerHeight] = useState(innerSize + Math.random() * 50)

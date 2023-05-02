@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Card, Divider, Input, Tooltip } from 'antd';
+import { Button, Card, Divider, Input, Pagination, Tooltip } from 'antd';
 import { useLocation } from 'react-router-dom';
 import User, { UserType } from '@/components/user'
 import Blog, { BlogType } from '@/components/blog'
@@ -14,45 +14,47 @@ import useSearch from '@/hooks/useSearch';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import useUserStore from '@/store/userContext';
 
-
-
-
-
 const UserBlog: React.FC = () => {
   const location = useLocation()
   const { searchFinder } = useSearch()
   const { userInfo } = useUser()
+  const [current, setCuerrent] = React.useState<number>(1)
   const [state, setState] = React.useState<{
     user: UserType,
-    blogs: BlogType[]
+    blogs: BlogType[],
+    total: number
   }>({
     user: { user_id: -1, username: '', email: '', description: '', is_me: false, privacy: {} },
-    blogs: []
+    blogs: [],
+    total: 0
   })
 
-  const fetchBlog = () => {
+  const fetchBlog = (page: number) => {
+    setCuerrent(page)
     const userId = searchFinder('user_id') || userInfo.user_id
-    getBlogByUser(userId).then((res) => {
-      setState({ user: userInfo, blogs: res?.list })
+    getBlogByUser(userId, page, 5).then((res) => {
+      setState({ user: userInfo, blogs: res?.list, total: res?.total })
     })
   }
 
   const fetchUser = () => {
     const userId = searchFinder('user_id') || userInfo.user_id
     getUser(Number(userId)).then((res) => {
-      setState((pre) => ({ user: res?.user, blogs: pre.blogs }))
+      setState((pre) => ({ user: res?.user, blogs: pre.blogs, total: pre?.total }))
     })
   }
 
   React.useEffect(() => {
     const urlUserId = searchFinder('user_id') || userInfo.user_id
-    Promise.all([getUser(Number(urlUserId)), getBlogByUser(Number(urlUserId))]).then((res) => {
+    if (urlUserId == -1) return
+    Promise.all([getUser(Number(urlUserId)), getBlogByUser(Number(urlUserId), 1, 5)]).then((res) => {
       setState({
         user: res[0]?.user,
-        blogs: res[1]?.list
+        blogs: res[1]?.list,
+        total: res[1]?.total
       })
     })
-  }, [userInfo, location, searchFinder])
+  }, [userInfo, location.search, searchFinder])
 
   return <div className={styles.box}>
     <div className={styles.left}>
@@ -76,9 +78,11 @@ const UserBlog: React.FC = () => {
     <div className={styles.content}>
       <Card title={state.user && state.user.user_id === userInfo.user_id ? '我的博客' : '博客列表'} bordered={false} style={{ width: '100%' }}>
         {state?.blogs?.length ? state.blogs.map(item => {
-          return <Blog key={item.blog_id} {...item} refetch={fetchBlog} />
+          return <Blog key={item.blog_id} {...item} refetch={() => fetchBlog(current)} />
         }) : <CustomEmpty description={!state.user?.is_me ? '该用户没有发布过博客' : '去发布一篇博客吧'} />}
+        <Pagination pageSize={5} total={state.total} onChange={(page) => { setCuerrent(() => page); fetchBlog(page) }} />
       </Card>
+
     </div>
 
 

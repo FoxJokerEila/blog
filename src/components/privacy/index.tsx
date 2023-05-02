@@ -39,10 +39,10 @@ const PrivacyModal: React.FC<IProps> = ({ user, refreshData, closeModal, ...rest
           <Radio value={0}>否</Radio>
         </Radio.Group>
       </Item>
-      <Item label="我博客下的评论，除评论者以外，他人是否可见" name="comment_privacy_level">
+      <Item label="是否允许在我的博客下发布公开评论" name="comment_privacy_level">
         <Radio.Group>
-          <Radio value={1}>可见</Radio>
-          <Radio value={0}>不可见</Radio>
+          <Radio value={1}>允许</Radio>
+          <Radio value={0}>不允许</Radio>
         </Radio.Group>
       </Item>
       <Item label="发布新博客时，是否开启评论区" name="is_commentable">

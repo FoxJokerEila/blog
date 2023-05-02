@@ -8,16 +8,18 @@ interface UseRequestOptions<T> {
 type OptionsType<T> = {
   deps: any[]
   initialValue?: T
+  delay?: number
 }
 
 function useRequest<T>(
   request: (params?: any) => Promise<T>,
   options: OptionsType<T> = {
     deps: [],
-    initialValue: undefined
+    initialValue: undefined,
+    delay: 0
   }
 ) {
-  const { deps, initialValue } = options
+  const { deps, initialValue, delay } = options
   const [loading, setLoading] = React.useState(false);
   const [data, setData] = React.useState<T | undefined>(initialValue);
   const [error, setError] = React.useState<Error | null>(null);
@@ -28,14 +30,16 @@ function useRequest<T>(
 
     try {
       const result = await request(params);
-      console.log({ result })
       setData(result);
     } catch (e: any) {
       setError(e);
     } finally {
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, delay)
+
     }
-  }, [request])
+  }, [delay, request])
 
   React.useEffect(() => {
     fetchData()

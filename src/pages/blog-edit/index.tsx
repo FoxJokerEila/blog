@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Input, Select, Spin } from 'antd';
+import { Button, Input, Select, Spin, message } from 'antd';
 import { Editor } from '@tinymce/tinymce-react'
 import { getBlog, getTags, postBlog, updateBlog, upload } from '@/services/blog';
 import useUser from '@/hooks/useUser';
@@ -61,8 +61,9 @@ const BlogEdit: React.FC<IProps> = function () {
         user_id: userInfo.user_id,
         tags: typeof selectedTags === 'string' ? selectedTags : selectedTags?.join(',') || '',
       }
-      if (searchFinder('blog_id')) {
-        updateBlog(data).then(res => {
+      const blog_id = Number(searchFinder('blog_id'))
+      if (blog_id) {
+        updateBlog({ ...data, blog_id }).then(res => {
           if (res?.code === 0) {
             navigate('/blog-read?blog_id=' + res?.blogId)
           }
@@ -90,26 +91,33 @@ const BlogEdit: React.FC<IProps> = function () {
     setSelected(value)
   };
 
+  // React.useEffect(() => {
+
+  // }, [])
+  const loadingRef = React.useRef(false)
   React.useEffect(() => {
+    if (loadingRef.current === true) return
+    loadingRef.current = true
     getTags().then((res) => {
       setTags(res.list)
+      loadingRef.current = false
+    }).then(() => {
+      const blog_id = searchFinder('blog_id')
+      if (blog_id) {
+        getBlog(Number(blog_id), true).then((res) => {
+          if (res.code === 0) {
+            const blog = res.blog
+            setInitCon(() => blog.content)
+            setContent(() => blog.content)
+            setTitle(() => blog.title)
+            setSelected(() => blog.tags.split(',').map(Number))
+          } else {
+            message.error(res.msg)
+          }
+        })
+      }
     })
-  }, [])
-
-  React.useEffect(() => {
-    const blog_id = searchFinder('blog_id')
-    if (blog_id && tags.length) {
-      getBlog(Number(blog_id)).then((res) => {
-        if (res.code === 0) {
-          const blog = res.blog
-          setInitCon(() => blog.content)
-          setContent(() => blog.content)
-          setTitle(() => blog.title)
-          setSelected(() => blog.tags.split(',').map(Number))
-        }
-      })
-    }
-  }, [searchFinder, tags])
+  }, [searchFinder, tags.length])
 
   return <div style={{ height: '100%' }}>
 

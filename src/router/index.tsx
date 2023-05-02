@@ -12,6 +12,10 @@ import FollowFan from '@/pages/follow-fan';
 export const router = [
   {
     path: "/",
+    element: <Login />,
+  },
+  {
+    path: "/home",
     element: <Home />,
   },
   {

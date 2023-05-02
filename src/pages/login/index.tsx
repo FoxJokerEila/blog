@@ -16,13 +16,18 @@ const Login: React.FC = () => {
   const navigate = useNavigate()
   const { loginFn } = useLogin()
   const onFinish = (values: any) => {
-    console.log('Success:', values);
     login(values).then((res) => {
       loginFn(res)
     }).catch(err => {
       console.log(err);
     })
   };
+
+  React.useEffect(() => {
+    if (localStorage.getItem('token')) {
+      navigate('/home')
+    }
+  }, [navigate])
 
   return <div className={styles.box}>
     <div className={styles.container}>

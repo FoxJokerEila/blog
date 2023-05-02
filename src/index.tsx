@@ -3,11 +3,9 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { ConfigProvider } from 'antd'
 import zhCN from 'antd/locale/zh_CN';
+import App from '@/layout'
 import reportWebVitals from './reportWebVitals';
 import './index.css';
-
-import App from '@/layout'
-
 import 'antd/dist/reset.css';
 
 type ThemeData = {

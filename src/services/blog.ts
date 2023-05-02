@@ -1,22 +1,24 @@
 import { NewBlogType, CommentType } from '@/pages/blog-edit'
 import { get, post } from './request'
 
-export const getBlog = (blog_id: number) => {
-  return get('/blog/get', { blog_id })
+export const getBlog = (blog_id: number, for_edit?: boolean) => {
+  console.log({ for_edit })
+
+  return get('/blog/get', { blog_id, for_edit })
 }
 
-export const getBlogByUser = (user_id: number) => {
+export const getBlogByUser = (user_id: number, current: number, size: number) => {
   if (user_id < 0) {
     return Promise.resolve(null)
   }
-  return get('/blog/get-by-user', { user_id })
+  return get('/blog/get-by-user', { user_id, current, size })
 }
 
 export const postBlog = (blog: NewBlogType) => {
   return post('/blog/post', { blog })
 }
 
-export const updateBlog = (blog: NewBlogType) => {
+export const updateBlog = (blog: NewBlogType & { blog_id: number }) => {
   return post('/blog/update', { blog })
 }
 
@@ -76,8 +78,8 @@ export const deleteComment = (comment_id: number, secondary_id?: string) => {
   return post('/blog/deleteComment', { comment_id, secondary_id })
 }
 
-export const getComment = (blog_id: number) => {
-  return get('/blog/getComment', { blog_id })
+export const getComments = (blog_id: number, current: number, size: number) => {
+  return get('/blog/getComment', { blog_id, current, size })
 }
 
 export const updateBlogPrivacy = (

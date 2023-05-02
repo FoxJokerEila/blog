@@ -7,13 +7,32 @@
 }
 .header {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
 }
 .header :global :where(.css-dev-only-do-not-override-8a2l44).ant-menu-dark {
   background: transparent;
 }
 .header :global :where(.css-dev-only-do-not-override-8a2l44).ant-menu-dark .ant-menu-item-selected {
   background: #424242;
+}
+.favorLabel {
+  color: #fff;
+}
+.favor {
+  height: 30px;
+  width: 180px;
+}
+.setFavor {
+  background-color: transparent;
+  margin-left: 6px;
+  margin-top: 2px;
+  color: #fff;
+}
+.setFavor:hover {
+  color: #fff;
+}
+.emptyDivider {
+  flex: 1;
 }
 .logo {
   margin-right: auto;

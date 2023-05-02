@@ -3,7 +3,7 @@ export const loginHeight = 'calc(100vh - 64px)'
 export const editHeight = '100vh'
 export const menu = [
   {
-    path: '',
+    path: 'home',
     name: '探索'
   },
   {

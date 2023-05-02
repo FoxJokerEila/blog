@@ -16,9 +16,6 @@ const UserPop: React.FC<IProps> = () => {
   const { getLocalUser, setUserInfo, userInfo } = useUser()
   const user = useUserStore(set => set.userInfo)
   return <Popover destroyTooltipOnHide arrowPointAtCenter overlayClassName={styles.user} placement="bottom"
-    // onOpenChange={() => {
-    //   setUserInfo(getLocalUser())
-    // }} 
     title={<div className={styles.username}>{userInfo.username}</div>}
     content={<div className={styles.popoverCon}>
       <div className={styles.follow}>
@@ -29,7 +26,7 @@ const UserPop: React.FC<IProps> = () => {
       <span className={styles.description}>{userInfo.description}</span>
       <span className={styles.email}><MailOutlined />&nbsp;&nbsp;{userInfo.email}</span>
       <div className={styles.logOutBtn}><Button icon={<ExportOutlined />} onClick={() => {
-        localStorage.clear();
+        localStorage.clear()
         window.location.href = '/login'
       }}>退出登录</Button>
       </div>

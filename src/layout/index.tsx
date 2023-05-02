@@ -1,21 +1,21 @@
 import * as React from 'react';
-import { Button, Divider, Layout, Menu, Popover, theme } from 'antd';
-import clsx from 'clsx'
+import { Button, Layout, Menu, Select } from 'antd';
 import {
   NavLink,
   useRoutes,
   useLocation,
   useNavigate,
-  Link
 } from "react-router-dom";
+import useFavorStore from '@/store/useFavorStore';
+import { UserType } from '@/components/user';
+import { getFavor, updateFavor } from '@/services/user';
+import { SettingOutlined } from '@ant-design/icons';
 import { router } from '@/router';
-import useUser from '@/hooks/useUser';
 import { menu, minHeight, loginHeight, editHeight } from './config';
 import styles from './index.module.less'
-import { ExportOutlined, MailOutlined } from '@ant-design/icons';
-import { UserType } from '@/components/user';
-import UserContext from '@/store/userContext';
 import UserPop from './user-pop';
+import FavorModal from './favor-modal';
+import useBoolean from '@/hooks/useBoolean';
 
 const { Header, Content, Footer } = Layout;
 
@@ -25,15 +25,16 @@ const App: React.FC<IProps> = () => {
   const routeElement = useRoutes(router)
   const navigate = useNavigate()
   const location = useLocation()
-  const { userInfo, setUserInfo } = useUser()
-
+  // const { userInfo, setUserInfo } = useUser()
+  const { setFvr } = useFavorStore()
   const [state, setState] = React.useState({
     selectedKey: '',
     // 是否处于 login 或 register 页面
     isLogin: true,
     isEdit: false,
   })
-
+  const [favor, setFavor] = React.useState<UserType['favor']>({ current: 0, list: [] })
+  const { state: favorModalVisible, setT: showFavorModal, setF: closeFavorModal } = useBoolean()
   const height = React.useMemo(() => {
     if (state.isLogin) {
       return loginHeight
@@ -44,29 +45,11 @@ const App: React.FC<IProps> = () => {
     return minHeight
   }, [state.isEdit, state.isLogin])
 
-  // const UserPart = (userInfo: UserType) => {
-  //   console.log({ userInfo });
-  //   return <Popover arrowPointAtCenter overlayClassName={styles.user} placement="bottom" title={<div className={styles.username}>{userInfo.username}</div>}
-  //     content={<div className={styles.popoverCon}>
-  //       <div className={styles.follow}>
-  //         <span><Link to='/fans'>粉丝：{userInfo?.fans}</Link></span>
-  //         <span><Link to='/follows'>关注：{userInfo?.following}</Link></span>
-  //       </div>
-  //       <Divider style={{ margin: '12px 0' }} />
-  //       <span className={styles.description}>{userInfo.description}</span>
-  //       <span className={styles.email}><MailOutlined />&nbsp;&nbsp;{userInfo.email}</span>
-  //       <div className={styles.logOutBtn}><Button icon={<ExportOutlined />} onClick={() => {
-  //         localStorage.clear();
-  //         window.location.href = '/login'
-  //       }}>退出登录</Button>
-  //       </div>
-  //     </div>}
-  //   >
-  //     <div className={styles.userInfo}>
-  //       {userInfo.username}
-  //     </div>
-  //   </Popover>
-  // }
+  const favorList = React.useMemo(() => {
+    if (!favor) return
+    const { list } = favor
+    return list.map(it => ({ label: it.name, value: it.id }))
+  }, [favor])
 
   React.useEffect(() => {
     setState({
@@ -74,18 +57,40 @@ const App: React.FC<IProps> = () => {
       isLogin: ['login', 'register'].includes(location.pathname.slice(1)),
       isEdit: ['blog-edit'].includes(location.pathname.slice(1)),
     })
-  }, [location])
+  }, [location.search, location.pathname])
+
+  const fetchFavor = React.useCallback(() => {
+    getFavor().then((res) => {
+      setFavor(res.favor)
+    })
+  }, [])
 
   React.useEffect(() => {
-    if (!state.isLogin && !localStorage.getItem('token')) {
+    if (favorList?.length || favor?.list?.length) return
+    if (localStorage.getItem('token')) {
+      fetchFavor()
+    }
+  }, [favorList?.length, fetchFavor, favor?.list?.length])
+
+  React.useEffect(() => {
+    if (!localStorage.getItem('token') && !['login', 'register'].includes(location.pathname.slice(1))) {
       navigate('/login')
     }
-  }, [navigate, state])
+  }, [location.pathname, navigate])
 
   return (
     <Layout className={styles.layout}>
       {!state.isLogin && !state.isEdit
         && <Header className={styles.header} style={{ background: 'linear-gradient(90deg, #343434, black)' }}>
+          <span className={styles.favorLabel}>当前偏好：</span><Select className={styles.favor} options={favorList} value={favor?.current} onChange={(value) => {
+            setFavor((pre) => ({ current: value, list: pre?.list || [] }))
+            updateFavor(value).then(res => {
+              setFvr(value)
+            })
+          }} />
+          <Button onClick={() => showFavorModal()} className={styles.setFavor}><span style={{ color: '#fff' }}><SettingOutlined /></span></Button>
+          <FavorModal favors={favor?.list || []} open={favorModalVisible} closeModal={closeFavorModal} refetchFavor={fetchFavor} />
+          <div className={styles.emptyDivider}></div>
           <Menu
             theme="dark"
             mode="horizontal"

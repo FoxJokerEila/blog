@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { useLocation } from 'react-router-dom';
 import dayjs from 'dayjs'
-import { Badge, Button, Card, Divider, Tag } from 'antd';
+import { Badge, Button, Card, Divider, Pagination, Tag } from 'antd';
 import { ClockCircleFilled, LikeFilled, LikeOutlined } from '@ant-design/icons';
-import { getBlog, getBlogByUser, like, comment, deleteComment } from '@/services/blog';
+import { getBlog, getBlogByUser, like, comment, deleteComment, getComments } from '@/services/blog';
 import User, { UserType } from '@/components/user';
 import Blog, { BlogType } from '@/components/blog';
 import { CommentType } from '@/pages/blog-edit'
@@ -23,9 +23,12 @@ const BlogRead: React.FC = function () {
   const { state: commentVisible, setF: closeDrawer, setT: openDrawer } = useBoolean(false)
   const [parentId, setParent] = React.useState<number>(0)
   const [targetId, setTarget] = React.useState<string>('')
+  const [current, setCuerrent] = React.useState<number>(1)
   const [commentState, setComment] = React.useState<CommentType>({
     content: '',
-    blog_id: 0
+    blog_id: 0,
+    user_id: -1,
+    username: '',
   })
   const location = useLocation()
   const { searchFinder } = useSearch()
@@ -33,13 +36,12 @@ const BlogRead: React.FC = function () {
 
   const { data: detail = {
     blog: undefined,
-    comments: [],
     user: { user_id: -1, username: '', email: '', description: '' },
     tags: []
   },
     fetchData } = useRequest<{
       blog: BlogType | undefined,
-      comments: CommentType[],
+      // comments: CommentType[],
       user: UserType,
       tags: { id: number, name: string }[]
     }>(async () => {
@@ -48,16 +50,28 @@ const BlogRead: React.FC = function () {
         const res = await getBlog(blogId)
         return {
           blog: res.blog,
-          comments: res.comments,
+          // comments: res.comments,
           user: res.user,
           tags: res.tags
         }
       } else {
-        return Promise.resolve({ blog: undefined, comments: [], user: { user_id: -1, username: '', email: '', description: '' }, tags: [] })
+        return Promise.resolve({ blog: undefined, user: { user_id: -1, username: '', email: '', description: '' }, tags: [] })
       }
     }, {
       deps: [location.search, searchFinder],
     })
+
+  const { data: commentData, fetchData: fetchComments } = useRequest<{ comments: CommentType[], total: number }>(async (current: number = 1, size: number = 5) => {
+    const blogId = searchFinder('blog_id')
+    if (blogId) {
+      const res = await getComments(blogId, current, size)
+      console.log({ res });
+
+      return res
+    } else {
+      return Promise.resolve([])
+    }
+  }, { deps: [location.search, searchFinder] })
 
   const handleLike = () => {
     const blogId = searchFinder('blog_id')
@@ -81,19 +95,19 @@ const BlogRead: React.FC = function () {
 
   const onComment = (content: string, parent_level_id?: number, target_comment_id?: string, privacy?: number) => {
     const blogId = searchFinder('blog_id')
-    const { user } = detail!
+
     const commentData: CommentType = {
       content,
       blog_id: blogId,
-      commented_user_id: user.user_id,
-      commented_username: user.username,
+      commented_user_id: commentState.user_id,
+      commented_username: commentState.username,
       parent_level_id,
       target_comment_id,
       comment_privacy_level: privacy,
     }
     comment(commentData).then(res => {
       onClose()
-      fetchData()
+      fetchComments(current)
     })
   }
 
@@ -102,21 +116,23 @@ const BlogRead: React.FC = function () {
     setTarget('')
     setComment({
       content: '',
-      blog_id: 0
+      blog_id: 0,
+      user_id: 0,
+      username: ''
     })
     closeDrawer()
   }
 
   const handleCommentDelete = (comment_id: number, secondary_id?: string) => {
     deleteComment(comment_id, secondary_id).then(() => {
-      fetchData()
+      fetchComments(current)
     })
   }
 
   const { data: hotList } = useRequest<BlogType[]>(async () => {
-    const res: BlogType[] = (await getBlogByUser(detail.user.user_id)).list
+    const res: BlogType[] = (await getBlogByUser(detail.user.user_id, current, 5)).list
     return Promise.resolve(res)
-  }, { deps: [detail.user.user_id] })
+  }, { deps: [detail?.user?.user_id] })
 
   return <div className={styles.box}>
     <div className={styles.left}>
@@ -141,13 +157,13 @@ const BlogRead: React.FC = function () {
       </div>
 
       <Card title="评论" className={styles.comments} extra={Boolean(detail.blog?.is_commentable) && <Button type='primary' onClick={openDrawer}>评论</Button>}>
-        {detail.blog?.is_commentable ? (detail.comments?.length ? detail.comments.map((cmmnt) => {
+        {detail.blog?.is_commentable ? (commentData?.comments?.length ? commentData?.comments.map((cmmnt) => {
           // commentCon: 每个一级评论展示的内容
           // showDrawer: 在评论组件内部点击二级评论的回复时，需要展示抽屉
           // onReply: 点击一级评论的回复时，需要展示抽屉，设置一级评论的id作为父级评论id，设置该一级评论为抽屉展示的评论内容
           // setTarget: 传入评论组件，供二级评论回复时调用
           // setComment: 传入评论组件，当回复二级评论时，抽屉展示的评论应该为这个二级评论
-          return <Comment
+          return <div><Comment
             key={cmmnt.id}
             userInfo={userInfo}
             commentCon={cmmnt}
@@ -157,15 +173,18 @@ const BlogRead: React.FC = function () {
             setComment={setComment}
             setParent={setParent}
             handleDelete={handleCommentDelete}
-          />
+          /></div>
 
         }) : <CustomEmpty description="暂无评论" />) : <CustomEmpty description="作者关闭了评论区" />}
-
+        <Pagination pageSize={5} total={commentData?.total} onChange={(page) => { setCuerrent(() => page); fetchComments(page) }} />
       </Card>
       {/* commentState: 展示在抽屉中的评论内容 */}
       {/* parent_level_id: 当发起二级评论时，需要设置一级评论的id */}
       {/* target_comment_id: 当对二级评论进行评论时，需要设置目标二级评论的评论id */}
-      <CommentDrawer comment={commentState} defaultPrivacy={detail.user.privacy?.comment_privacy_level} onSubmit={onComment} parent_level_id={parentId} target_comment_id={targetId} defaultProp={{
+      {/* privacySet 用于限制评论隐私选择列表的选项，如果为0 说明博客只允许私密评论 */}
+      {/* defaultPrivacy 默认选择的隐私选项，需要用户自己的信息去设置 */}
+
+      <CommentDrawer comment={commentState} privacySet={detail.blog?.comment_privacy_level} defaultPrivacy={userInfo.privacy?.comment_privacy_level} onSubmit={onComment} parent_level_id={parentId} target_comment_id={targetId} defaultProp={{
         open: commentVisible,
         onClose,
         width: 500,

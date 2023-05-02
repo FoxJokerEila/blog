@@ -52,11 +52,8 @@ const Blog: React.FC<BlogType & { type?: 'default' | 'mini', refetch?: () => voi
   const handleDelete = (e: any) => {
     e.stopPropagation()
     deleteBlog(blog_id).then((res) => {
-      if (res?.data.code === 0) {
+      if (res?.code === 0) {
         refetch?.()
-        alertNotification('提示', '删除成功')
-      } else {
-        alertNotification('提示', res?.data.msg)
       }
     })
   }

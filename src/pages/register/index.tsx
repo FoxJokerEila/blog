@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { Button, Form, Input } from 'antd';
+import { Button, Form, Input, message } from 'antd';
 import styles from './index.module.less'
 import Label from '@/components/common/common-label';
 import { post } from '@/services/request';
 import { useNavigate } from 'react-router-dom';
-import alertNotification from '@/components/common/notification';
 
 const onFinishFailed = (errorInfo: any) => {
   console.log('Failed:', errorInfo);
@@ -14,17 +13,14 @@ const Register: React.FC = () => {
   const navigate = useNavigate()
 
   const onFinish = (values: any) => {
-    console.log('Success:', values);
     post('/user/register', values).then((res) => {
-      setTimeout(() => {
-        navigate('/login')
-      }, 1500)
-      // if (res?.code === 0) {
-      //   alertNotification('提示', '注册成功')
-      //   setTimeout(() => {
-      //     navigate('/login')
-      //   }, 1500)
-      // }
+      if (res.code === 0) {
+        setTimeout(() => {
+          navigate('/login')
+        }, 1500)
+      } else {
+        message.error(res.msg)
+      }
     })
   };
   return (
@@ -51,16 +47,15 @@ const Register: React.FC = () => {
               label={<Label className={styles.text}><b>用户名</b></Label>}
               name="username"
               required={false}
-              rules={[{ required: true, message: 'Please input your username!' }]}
+              rules={[{ required: true, message: '请输入用户名' }]}
             >
               <Input />
             </Form.Item>
 
             <Form.Item
-              label={<Label className={styles.text}><b>邮箱</b></Label>}
+              label={<Label className={styles.text}><b>邮箱(非必填)</b></Label>}
               name="email"
               required={false}
-              rules={[{ required: true, message: 'Please input your username!' }]}
             >
               <Input />
             </Form.Item>
@@ -69,7 +64,7 @@ const Register: React.FC = () => {
               label={<Label className={styles.text}><b>密码</b></Label>}
               name="password"
               required={false}
-              rules={[{ required: true, message: 'Please input your password!' }]}
+              rules={[{ required: true, message: '请设置密码' }]}
             >
               <Input.Password />
             </Form.Item>
@@ -77,7 +72,21 @@ const Register: React.FC = () => {
               label={<Label className={styles.text}><b>再次输入密码</b></Label>}
               name="repassword"
               required={false}
-              rules={[{ required: true, message: 'Please input your password!' }]}
+              dependencies={['password']}
+              rules={[
+                {
+                  required: true,
+                  message: '请再次输入密码',
+                },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (!value || getFieldValue('password') === value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(new Error('两次密码输入不一致'));
+                  },
+                }),
+              ]}
             >
               <Input.Password />
             </Form.Item>

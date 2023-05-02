@@ -14,6 +14,8 @@ export const get = async function (
   config?: AxiosRequestConfig<any>
 ) {
   try {
+    console.log({ params })
+
     const { data } = await instance.get(url, { ...config, params })
     if (data?.code === 0 && data?.msg) {
       alertMessage({
@@ -22,14 +24,13 @@ export const get = async function (
     }
     return await Promise.resolve(data)
   } catch (err: any) {
-    console.log(err)
     if (err?.response?.status === 401) {
       alertNotification('提示', '请登录')
-      // setTimeout(() => {
-      //   localStorage.clear()
-      //   window.location.href = '/login'
-      //   return
-      // }, 1500)
+      setTimeout(() => {
+        localStorage.clear()
+        window.location.href = '/login'
+        return
+      }, 1500)
     }
   }
 }
@@ -46,17 +47,21 @@ export const post = async function (
         msg: resData.msg
       })
     }
+    if (resData?.code === 3 && resData?.msg) {
+      alertMessage({
+        msg: resData.msg,
+        type: 'error'
+      })
+    }
     return await Promise.resolve(resData)
   } catch (err: any) {
-    console.log(err)
-
     if (err?.response?.status === 401) {
       alertNotification('提示', '请登录')
-      // setTimeout(() => {
-      //   localStorage.clear()
-      //   window.location.href = '/login'
-      //   return
-      // }, 1500)
+      setTimeout(() => {
+        localStorage.clear()
+        window.location.href = '/login'
+        return
+      }, 1500)
     }
   }
 }

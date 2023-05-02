@@ -4,6 +4,8 @@ export type RecordType = 'click' | 'view'
 
 const record = (type: RecordType, rest: { user_id?: number, blog_id?: number }) => {
   const { user_id, blog_id } = rest
+  console.log(user_id, blog_id);
+
   if (user_id && blog_id) {
     switch (type) {
       case 'click':
