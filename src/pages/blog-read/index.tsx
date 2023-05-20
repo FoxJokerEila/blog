@@ -192,7 +192,7 @@ const BlogRead: React.FC = function () {
     </div>
     <div className={styles.right}>
       <User {...detail?.user} user={detail?.user} refreshData={fetchData} />
-      <Card title="热门文章" extra={<Button type="link" onClick={() => window.open(`${window.location.origin}/user-blog?user_id=${detail.user.user_id}`)}>更多</Button>} style={{ width: 300, marginTop: 12 }} bodyStyle={{ paddingTop: 12 }}>
+      <Card title="热门文章" extra={<Button type="link" onClick={() => window.open(`${window.location.origin}/#/user-blog?user_id=${detail.user.user_id}`)}>更多</Button>} style={{ width: 300, marginTop: 12 }} bodyStyle={{ paddingTop: 12 }}>
         {hotList?.slice(0, 5).map((item: BlogType) => {
           return <Blog key={item.blog_id} type="mini" {...item} blog_id={item.blog_id} title={item.title}></Blog>
         })}

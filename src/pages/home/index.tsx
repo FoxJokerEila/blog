@@ -47,7 +47,7 @@ const Home: React.FC<IProps> = function () {
 
       <div style={{ maxHeight: minHeight, position: 'relative', display: 'flex', flexWrap: 'wrap', justifyContent: 'space-evenly' }}>
         {data && data?.map((item: BlogType, index: number) => {
-          return <Bubble key={index} titleSize={16} title={item.title} onClick={() => { record('click', { user_id: item.user_id, blog_id: item.blog_id }); window.open(`${window.location.origin}/blog-read?blog_id=${item.blog_id}`) }} />
+          return <Bubble key={index} titleSize={16} title={item.title} onClick={() => { record('click', { user_id: item.user_id, blog_id: item.blog_id }); window.open(`${window.location.origin}/#/blog-read?blog_id=${item.blog_id}`) }} />
         })}
       </div>
     </Spin>

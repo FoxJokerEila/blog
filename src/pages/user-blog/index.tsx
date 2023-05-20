@@ -8,11 +8,10 @@ import useUser from '@/hooks/useUser';
 import { getUser } from '@/services/user';
 
 import styles from './index.module.less'
-import { addTag, getBlogByUser, getTags } from '@/services/blog';
+import { getBlogByUser } from '@/services/blog';
 import CustomEmpty from '@/components/common/empty';
 import useSearch from '@/hooks/useSearch';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import useUserStore from '@/store/userContext';
 
 const UserBlog: React.FC = () => {
   const location = useLocation()
@@ -70,7 +69,7 @@ const UserBlog: React.FC = () => {
         className={styles.bubbleCard}
         bodyStyle={{ display: 'flex', flexWrap: 'wrap' }}>
         {state.blogs?.map((item: BlogType, index: number) => {
-          return <Bubble onClick={() => window.open(`${window.location.origin}/blog-read?blog_id=${item.blog_id}`)} key={index} size={90} title={item.title} titleLine={2} titleWidth="90%" floatSizeRangeConst={0.5} floatMarginConst={0.1} wrapWidth={115} />
+          return <Bubble onClick={() => window.open(`${window.location.origin}/#/blog-read?blog_id=${item.blog_id}`)} key={index} size={90} title={item.title} titleLine={2} titleWidth="90%" floatSizeRangeConst={0.5} floatMarginConst={0.1} wrapWidth={115} />
         })}
       </Card> : null}
     </div>

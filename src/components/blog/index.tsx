@@ -60,7 +60,7 @@ const Blog: React.FC<BlogType & { type?: 'default' | 'mini', refetch?: () => voi
 
   const handleUpdate = (e: any) => {
     e.stopPropagation()
-    window.open(`${window.location.origin}/blog-edit?blog_id=${blog_id}`)
+    window.open(`${window.location.origin}/#/blog-edit?blog_id=${blog_id}`)
   }
 
   /**
@@ -80,7 +80,7 @@ const Blog: React.FC<BlogType & { type?: 'default' | 'mini', refetch?: () => voi
     <div className={styles.content} onClick={() => {
       console.log({ blogPrivacy });
       !is_me && record('click', { blog_id })
-      window.open(`${window.location.origin}/blog-read?blog_id=${blog_id}`)
+      window.open(`${window.location.origin}/#/blog-read?blog_id=${blog_id}`)
     }}>
       <div className={styles.left}>
         <div><h3 className={styles.title}>{title}</h3></div>
@@ -113,7 +113,7 @@ const Blog: React.FC<BlogType & { type?: 'default' | 'mini', refetch?: () => voi
     </div>
   </Card> : <div className={styles.blog} onClick={() => {
     !is_me && record('click', { blog_id })
-    window.open(`${window.location.origin}/blog-read?blog_id=${blog_id}`)
+    window.open(`${window.location.origin}/#/blog-read?blog_id=${blog_id}`)
   }}>
     <span className={styles.title}>
       {title}
